@@ -1,11 +1,11 @@
 # Daymark
 
-[![Build and Deploy](https://github.com/technothatch/general/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/technothatch/general/actions/workflows/deploy-pages.yml)
-[![GitHub Pages](https://img.shields.io/badge/demo-GitHub%20Pages-247da3?logo=github)](https://technothatch.github.io/general/)
-[![License](https://img.shields.io/github/license/technothatch/general)](LICENSE)
-[![GitHub release](https://img.shields.io/github/v/release/technothatch/general?display_name=tag)](https://github.com/technothatch/general/tags)
-[![Last commit](https://img.shields.io/github/last-commit/technothatch/general)](https://github.com/technothatch/general/commits/main)
-[![Issues](https://img.shields.io/github/issues/technothatch/general)](https://github.com/technothatch/general/issues)
+[![Build and Deploy](https://github.com/technothatch/daymark/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/technothatch/daymark/actions/workflows/deploy-pages.yml)
+[![GitHub Pages](https://img.shields.io/badge/demo-GitHub%20Pages-247da3?logo=github)](https://technothatch.github.io/daymark/)
+[![License](https://img.shields.io/github/license/technothatch/daymark)](LICENSE)
+[![GitHub release](https://img.shields.io/github/v/release/technothatch/daymark?display_name=tag)](https://github.com/technothatch/daymark/tags)
+[![Last commit](https://img.shields.io/github/last-commit/technothatch/daymark)](https://github.com/technothatch/daymark/commits/main)
+[![Issues](https://img.shields.io/github/issues/technothatch/daymark)](https://github.com/technothatch/daymark/issues)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.x-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-8.x-646cff?logo=vite&logoColor=white)](https://vite.dev/)
 [![Static site](https://img.shields.io/badge/site-static-2ea44f)](ARCHITECTURE.md)
@@ -46,7 +46,7 @@ Create a production build with `npm run build`. The generated `dist/` folder is 
 
 ## Live demo and deployment
 
-The live demo is [technothatch.github.io/general](https://technothatch.github.io/general/). Every push to `main` runs the GitHub Pages workflow in `.github/workflows/deploy-pages.yml`. Enable GitHub Pages once in repository settings with **Source: GitHub Actions**; after that, deployment is automatic.
+The live demo is [technothatch.github.io/daymark](https://technothatch.github.io/daymark/). Every push to `main` runs the GitHub Pages workflow in `.github/workflows/deploy-pages.yml`. Enable GitHub Pages once in repository settings with **Source: GitHub Actions**; after that, deployment is automatic.
 
 SEO entry pages:
 

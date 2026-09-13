@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://technothatch.github.io/general/</loc></url>
-  <url><loc>https://technothatch.github.io/general/daily-planner.html</loc></url>
-  <url><loc>https://technothatch.github.io/general/focus-timer.html</loc></url>
-  <url><loc>https://technothatch.github.io/general/mood-planner.html</loc></url>
-  <url><loc>https://technothatch.github.io/general/study-timer.html</loc></url>
-  <url><loc>https://technothatch.github.io/general/private-planner.html</loc></url>
-  <url><loc>https://technothatch.github.io/general/personal-productivity.html</loc></url>
+  <url><loc>https://technothatch.github.io/daymark/</loc></url>
+  <url><loc>https://technothatch.github.io/daymark/daily-planner.html</loc></url>
+  <url><loc>https://technothatch.github.io/daymark/focus-timer.html</loc></url>
+  <url><loc>https://technothatch.github.io/daymark/mood-planner.html</loc></url>
+  <url><loc>https://technothatch.github.io/daymark/study-timer.html</loc></url>
+  <url><loc>https://technothatch.github.io/daymark/private-planner.html</loc></url>
+  <url><loc>https://technothatch.github.io/daymark/personal-productivity.html</loc></url>
 </urlset>
