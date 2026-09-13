@@ -189,9 +189,11 @@ const bindEvents = () => {
   document.querySelector('#help')?.addEventListener('click', () => { document.querySelector('#help-dialog')?.classList.add('open') })
   document.querySelector('#close-help')?.addEventListener('click', () => { document.querySelector('#help-dialog')?.classList.remove('open') })
   document.querySelector('#close-help-action')?.addEventListener('click', () => { document.querySelector('#help-dialog')?.classList.remove('open') })
+  document.querySelector('#help-dialog')?.addEventListener('click', (event) => { if (event.target === event.currentTarget) (event.currentTarget as HTMLElement).classList.remove('open') })
   document.querySelector('#stats')?.addEventListener('click', () => { document.querySelector('#stats-dialog')?.classList.add('open') })
   document.querySelector('#close-stats')?.addEventListener('click', () => { document.querySelector('#stats-dialog')?.classList.remove('open') })
   document.querySelector('#close-stats-action')?.addEventListener('click', () => { document.querySelector('#stats-dialog')?.classList.remove('open') })
+  document.querySelector('#stats-dialog')?.addEventListener('click', (event) => { if (event.target === event.currentTarget) (event.currentTarget as HTMLElement).classList.remove('open') })
   window.onkeydown = (event) => { if (event.key === 'Escape') { document.querySelector('#help-dialog')?.classList.remove('open'); document.querySelector('#stats-dialog')?.classList.remove('open') } if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return; if (event.key === '/') { event.preventDefault(); document.querySelector<HTMLInputElement>('#task-input')?.focus() } if (event.key.toLowerCase() === 'f') document.querySelector<HTMLButtonElement>('#timer-toggle')?.click(); if (event.key === '?') document.querySelector<HTMLButtonElement>('#help')?.click(); if (event.key.toLowerCase() === 's') document.querySelector<HTMLButtonElement>('#stats')?.click() }
 }
 
