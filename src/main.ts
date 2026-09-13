@@ -128,7 +128,7 @@ const render = () => {
   const intentionPlaceholder = recentIntentions[0] ? `Continue with: ${recentIntentions[0]}` : 'Add a concrete intention...'
   app.innerHTML = `
     <header class="topbar">
-      <a class="brand" href="/" aria-label="Daymark home"><span class="brand-mark">D</span><span>daymark</span></a>
+      <a class="brand" href="./" aria-label="Daymark home"><span class="brand-mark">D</span><span>daymark</span></a>
       <div class="top-mood" aria-label="How are you arriving?"><span>Today</span>${['scattered', 'low-key', 'steady', 'bright'].map((mood) => `<button class="mood ${state.mood === mood ? 'selected' : ''}" data-mood="${mood}" title="Arriving ${mood}"><span>${mood === 'scattered' ? '◌' : mood === 'low-key' ? '—' : mood === 'steady' ? '○' : '✦'}</span><b>${mood}</b></button>`).join('')}</div>
       <div class="top-actions"><span class="saved-state">Saved on this device</span><button class="icon-button" id="stats" title="View private statistics" aria-label="View private statistics">◒</button><button class="icon-button" id="help" title="How Daymark works" aria-label="How Daymark works">?</button><button class="icon-button" id="export" title="Export your day" aria-label="Export your day">↓</button><button class="avatar" title="Your local profile" aria-label="Your local profile">A</button></div>
     </header>
