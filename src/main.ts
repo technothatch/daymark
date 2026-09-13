@@ -160,40 +160,58 @@ const render = () => {
 }
 
 const bindEvents = () => {
+  if (app.dataset.eventsBound) return
+  app.dataset.eventsBound = 'true'
   const showToast = (message: string) => { const toast = document.querySelector('#toast'); if (!toast) return; toast.textContent = message; toast.classList.add('show'); window.setTimeout(() => toast.classList.remove('show'), 2400) }
-  document.querySelectorAll<HTMLInputElement>('[data-task]').forEach((input) => input.addEventListener('change', () => {
+  app.addEventListener('change', (event) => {
+    const input = event.target as HTMLInputElement
+    if (!input.matches('[data-task]')) return
     const task = state.tasks.find((item) => item.id === Number(input.dataset.task))
     if (task) task.done = input.checked
     persist(); render(); showToast(input.checked ? 'Marked complete.' : 'Back on your list.')
-  }))
-  document.querySelectorAll<HTMLButtonElement>('[data-remove]').forEach((button) => button.addEventListener('click', (event) => { event.preventDefault(); event.stopPropagation(); state.tasks = state.tasks.filter((task) => task.id !== Number(button.dataset.remove)); persist(); render(); showToast('Removed from today.') }))
-  document.querySelector<HTMLFormElement>('#task-form')?.addEventListener('submit', (event) => {
+  })
+  app.addEventListener('input', (event) => {
+    const note = event.target as HTMLTextAreaElement
+    if (!note.matches('#note')) return
+    state.note = note.value
+    window.clearTimeout(notePersistId)
+    notePersistId = window.setTimeout(persist, 250)
+    const count = document.querySelector('.note-footer span')
+    if (count) count.textContent = `${state.note.length}/240`
+  })
+  app.addEventListener('submit', (event) => {
+    if (!(event.target instanceof HTMLFormElement) || event.target.id !== 'task-form') return
     event.preventDefault()
-    const input = document.querySelector<HTMLInputElement>('#task-input')!
-    if (!input.value.trim()) return
+    const input = document.querySelector<HTMLInputElement>('#task-input')
+    if (!input?.value.trim()) return
     const text = input.value.trim()
     state.tasks.push({ id: Date.now(), text, done: false, tag: 'today' })
     state.intentionHistory = [...(state.intentionHistory ?? []), text].slice(-40)
     persist(); render(); requestAnimationFrame(() => document.querySelector<HTMLInputElement>('#task-input')?.focus())
   })
-  document.querySelectorAll<HTMLButtonElement>('[data-suggestion]').forEach((button) => button.addEventListener('click', () => { const text = button.dataset.suggestion ?? ''; state.tasks.push({ id: Date.now(), text, done: false, tag: 'today' }); state.intentionHistory = [...(state.intentionHistory ?? []), text].slice(-40); persist(); render(); showToast('Added to today.') }))
-  document.querySelector('#clear-completed')?.addEventListener('click', () => { state.tasks = state.tasks.filter((task) => !task.done); persist(); render() })
-  document.querySelector<HTMLTextAreaElement>('#note')?.addEventListener('input', (event) => { state.note = (event.target as HTMLTextAreaElement).value; window.clearTimeout(notePersistId); notePersistId = window.setTimeout(persist, 250); const count = document.querySelector('.note-footer span'); if (count) count.textContent = `${state.note.length}/240` })
-  document.querySelectorAll<HTMLButtonElement>('[data-mood]').forEach((button) => button.addEventListener('click', () => { state.mood = button.dataset.mood ?? 'steady'; setCookie('daymark-mood', state.mood); timerPreset = moodGuidance[state.mood]?.preset ?? 25; setCookie('daymark-timer', String(timerPreset)); timerRunning = false; window.clearInterval(timerId); timerSeconds = timerPreset * 60; persist(); render() }))
-  document.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((button) => button.addEventListener('click', () => { timerRunning = false; window.clearInterval(timerId); timerPreset = Number(button.dataset.preset); setCookie('daymark-timer', String(timerPreset)); timerSeconds = timerPreset * 60; render() }))
-  document.querySelector('#timer-toggle')?.addEventListener('click', () => { timerRunning = !timerRunning; if (timerRunning) timerId = window.setInterval(() => { timerSeconds = Math.max(0, timerSeconds - 1); if (timerSeconds === 0) { state.focusMinutes += timerPreset; persist(); timerRunning = false; window.clearInterval(timerId); render(); showToast(`${timerPreset} focused minutes logged.`); if (notificationStatus() === 'granted') new Notification('Daymark: focus complete', { body: `${timerPreset} minutes are yours. Take a breath before the next thing.`, tag: 'daymark-focus-complete' }); return } updateTimerDisplay() }, 1000); else window.clearInterval(timerId); updateTimerDisplay(); const toggle = document.querySelector<HTMLButtonElement>('#timer-toggle'); if (toggle) toggle.textContent = timerRunning ? 'Pause' : 'Start focus'; showToast(timerRunning ? 'Focus mode started.' : 'Focus paused.') })
-  document.querySelector('#timer-reset')?.addEventListener('click', () => { timerRunning = false; window.clearInterval(timerId); timerSeconds = timerPreset * 60; render() })
-  document.querySelector('#notifications')?.addEventListener('click', async () => { if (!('Notification' in window)) { showToast('Browser alerts are not available here.'); return } const permission = await Notification.requestPermission(); render(); showToast(permission === 'granted' ? 'Focus alerts are on.' : 'Alerts stayed off.') })
-  document.querySelector('#export')?.addEventListener('click', () => { const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `daymark-${dateKey}.json`; link.click(); URL.revokeObjectURL(link.href) })
-  document.querySelector('#clear-data')?.addEventListener('click', () => { if (confirm('Clear your Daymark data from this device?')) { localStorage.removeItem('daymark-state'); location.reload() } })
-  document.querySelector('#help')?.addEventListener('click', () => { document.querySelector('#help-dialog')?.classList.add('open') })
-  document.querySelector('#close-help')?.addEventListener('click', () => { document.querySelector('#help-dialog')?.classList.remove('open') })
-  document.querySelector('#close-help-action')?.addEventListener('click', () => { document.querySelector('#help-dialog')?.classList.remove('open') })
-  document.querySelector('#help-dialog')?.addEventListener('click', (event) => { if (event.target === event.currentTarget) (event.currentTarget as HTMLElement).classList.remove('open') })
-  document.querySelector('#stats')?.addEventListener('click', () => { document.querySelector('#stats-dialog')?.classList.add('open') })
-  document.querySelector('#close-stats')?.addEventListener('click', () => { document.querySelector('#stats-dialog')?.classList.remove('open') })
-  document.querySelector('#close-stats-action')?.addEventListener('click', () => { document.querySelector('#stats-dialog')?.classList.remove('open') })
-  document.querySelector('#stats-dialog')?.addEventListener('click', (event) => { if (event.target === event.currentTarget) (event.currentTarget as HTMLElement).classList.remove('open') })
+  app.addEventListener('click', async (event) => {
+    const target = event.target as Element
+    const button = target.closest<HTMLButtonElement>('button')
+    if (!button) return
+    const removeId = button.dataset.remove
+    if (removeId) { event.preventDefault(); event.stopPropagation(); state.tasks = state.tasks.filter((task) => task.id !== Number(removeId)); persist(); render(); showToast('Removed from today.'); return }
+    const suggestion = button.dataset.suggestion
+    if (suggestion) { state.tasks.push({ id: Date.now(), text: suggestion, done: false, tag: 'today' }); state.intentionHistory = [...(state.intentionHistory ?? []), suggestion].slice(-40); persist(); render(); showToast('Added to today.'); return }
+    const mood = button.dataset.mood
+    if (mood) { state.mood = mood; setCookie('daymark-mood', mood); timerPreset = moodGuidance[mood]?.preset ?? 25; setCookie('daymark-timer', String(timerPreset)); timerRunning = false; window.clearInterval(timerId); timerSeconds = timerPreset * 60; persist(); render(); return }
+    const preset = button.dataset.preset
+    if (preset) { timerRunning = false; window.clearInterval(timerId); timerPreset = Number(preset); setCookie('daymark-timer', preset); timerSeconds = timerPreset * 60; render(); return }
+    if (button.id === 'clear-completed') { state.tasks = state.tasks.filter((task) => !task.done); persist(); render(); return }
+    if (button.id === 'timer-toggle') { timerRunning = !timerRunning; if (timerRunning) timerId = window.setInterval(() => { timerSeconds = Math.max(0, timerSeconds - 1); if (timerSeconds === 0) { state.focusMinutes += timerPreset; persist(); timerRunning = false; window.clearInterval(timerId); render(); showToast(`${timerPreset} focused minutes logged.`); if (notificationStatus() === 'granted') new Notification('Daymark: focus complete', { body: `${timerPreset} minutes are yours. Take a breath before the next thing.`, tag: 'daymark-focus-complete' }); return } updateTimerDisplay() }, 1000); else window.clearInterval(timerId); updateTimerDisplay(); showToast(timerRunning ? 'Focus mode started.' : 'Focus paused.'); return }
+    if (button.id === 'timer-reset') { timerRunning = false; window.clearInterval(timerId); timerSeconds = timerPreset * 60; render(); return }
+    if (button.id === 'notifications') { if (!('Notification' in window)) { showToast('Browser alerts are not available here.'); return } const permission = await Notification.requestPermission(); render(); showToast(permission === 'granted' ? 'Focus alerts are on.' : 'Alerts stayed off.'); return }
+    if (button.id === 'export') { const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `daymark-${dateKey}.json`; link.click(); URL.revokeObjectURL(link.href); return }
+    if (button.id === 'clear-data') { if (confirm('Clear your Daymark data from this device?')) { localStorage.removeItem('daymark-state'); location.reload() } return }
+    if (button.id === 'help' || button.id === 'stats') { document.querySelector(`#${button.id === 'help' ? 'help-dialog' : 'stats-dialog'}`)?.classList.add('open'); return }
+    if (button.id === 'close-help' || button.id === 'close-help-action') { document.querySelector('#help-dialog')?.classList.remove('open'); return }
+    if (button.id === 'close-stats' || button.id === 'close-stats-action') { document.querySelector('#stats-dialog')?.classList.remove('open'); return }
+  })
+  app.addEventListener('click', (event) => { if (event.target === document.querySelector('#help-dialog') || event.target === document.querySelector('#stats-dialog')) (event.target as HTMLElement).classList.remove('open') })
   window.onkeydown = (event) => { if (event.key === 'Escape') { document.querySelector('#help-dialog')?.classList.remove('open'); document.querySelector('#stats-dialog')?.classList.remove('open') } if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return; if (event.key === '/') { event.preventDefault(); document.querySelector<HTMLInputElement>('#task-input')?.focus() } if (event.key.toLowerCase() === 'f') document.querySelector<HTMLButtonElement>('#timer-toggle')?.click(); if (event.key === '?') document.querySelector<HTMLButtonElement>('#help')?.click(); if (event.key.toLowerCase() === 's') document.querySelector<HTMLButtonElement>('#stats')?.click() }
 }
 
