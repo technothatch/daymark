@@ -12,7 +12,8 @@ const setCookie = (name: string, value: string) => { document.cookie = `${name}=
 const saved = localStorage.getItem('daymark-state')
 let state: DaymarkState
 try {
-  state = saved ? JSON.parse(saved) : {
+  const parsed = saved ? JSON.parse(saved) : null
+  state = parsed && typeof parsed === 'object' ? parsed as DaymarkState : {
     tasks: [
       { id: 1, text: 'Write the next physical step for your priority', done: false, tag: 'priority' },
       { id: 2, text: 'Clear one small piece of friction', done: false, tag: 'admin' },
@@ -24,11 +25,17 @@ try {
   state = { tasks: [], note: '', mood: 'steady', focusMinutes: 0, date: dateKey }
 }
 
-if (!state.tasks) state.tasks = []
-if (!state.note) state.note = ''
-if (!state.mood) state.mood = 'steady'
-if (!state.history) state.history = []
-if (!state.intentionHistory) state.intentionHistory = []
+if (!Array.isArray(state.tasks)) state.tasks = []
+if (typeof state.note !== 'string') state.note = ''
+if (typeof state.mood !== 'string') state.mood = 'steady'
+if (!Array.isArray(state.history)) state.history = []
+if (!Array.isArray(state.intentionHistory)) state.intentionHistory = []
+state.tasks = state.tasks.filter((task): task is Task => Boolean(task && typeof task === 'object' && typeof task.text === 'string')).map((task) => ({
+  id: typeof task.id === 'number' ? task.id : Date.now() + Math.random(),
+  text: task.text,
+  done: Boolean(task.done),
+  tag: typeof task.tag === 'string' ? task.tag : 'today',
+}))
 const cookieMood = getCookie('daymark-mood')
 if (cookieMood && ['scattered', 'low-key', 'steady', 'bright'].includes(cookieMood)) state.mood = cookieMood
 
@@ -64,6 +71,7 @@ const app = document.querySelector<HTMLDivElement>('#app')!
 let timerSeconds = 25 * 60
 let timerRunning = false
 let timerId: number | undefined
+let notePersistId: number | undefined
 const savedTimerPreset = Number(getCookie('daymark-timer'))
 let timerPreset = [5, 25, 50].includes(savedTimerPreset) ? savedTimerPreset : 25
 let hasPainted = false
@@ -170,7 +178,7 @@ const bindEvents = () => {
   })
   document.querySelectorAll<HTMLButtonElement>('[data-suggestion]').forEach((button) => button.addEventListener('click', () => { const text = button.dataset.suggestion ?? ''; state.tasks.push({ id: Date.now(), text, done: false, tag: 'today' }); state.intentionHistory = [...(state.intentionHistory ?? []), text].slice(-40); persist(); render(); showToast('Added to today.') }))
   document.querySelector('#clear-completed')?.addEventListener('click', () => { state.tasks = state.tasks.filter((task) => !task.done); persist(); render() })
-  document.querySelector<HTMLTextAreaElement>('#note')?.addEventListener('input', (event) => { state.note = (event.target as HTMLTextAreaElement).value; persist(); const count = document.querySelector('.note-footer span'); if (count) count.textContent = `${state.note.length}/240` })
+  document.querySelector<HTMLTextAreaElement>('#note')?.addEventListener('input', (event) => { state.note = (event.target as HTMLTextAreaElement).value; window.clearTimeout(notePersistId); notePersistId = window.setTimeout(persist, 250); const count = document.querySelector('.note-footer span'); if (count) count.textContent = `${state.note.length}/240` })
   document.querySelectorAll<HTMLButtonElement>('[data-mood]').forEach((button) => button.addEventListener('click', () => { state.mood = button.dataset.mood ?? 'steady'; setCookie('daymark-mood', state.mood); timerPreset = moodGuidance[state.mood]?.preset ?? 25; setCookie('daymark-timer', String(timerPreset)); timerRunning = false; window.clearInterval(timerId); timerSeconds = timerPreset * 60; persist(); render() }))
   document.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((button) => button.addEventListener('click', () => { timerRunning = false; window.clearInterval(timerId); timerPreset = Number(button.dataset.preset); setCookie('daymark-timer', String(timerPreset)); timerSeconds = timerPreset * 60; render() }))
   document.querySelector('#timer-toggle')?.addEventListener('click', () => { timerRunning = !timerRunning; if (timerRunning) timerId = window.setInterval(() => { timerSeconds = Math.max(0, timerSeconds - 1); if (timerSeconds === 0) { state.focusMinutes += timerPreset; persist(); timerRunning = false; window.clearInterval(timerId); render(); showToast(`${timerPreset} focused minutes logged.`); if (notificationStatus() === 'granted') new Notification('Daymark: focus complete', { body: `${timerPreset} minutes are yours. Take a breath before the next thing.`, tag: 'daymark-focus-complete' }); return } updateTimerDisplay() }, 1000); else window.clearInterval(timerId); updateTimerDisplay(); const toggle = document.querySelector<HTMLButtonElement>('#timer-toggle'); if (toggle) toggle.textContent = timerRunning ? 'Pause' : 'Start focus'; showToast(timerRunning ? 'Focus mode started.' : 'Focus paused.') })

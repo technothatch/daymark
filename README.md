@@ -1,17 +1,28 @@
 # Daymark
 
-[![Build and Deploy](https://github.com/technothatch/general/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/technothatch/general/actions/workflows/deploy-pages.yml) [![License](https://img.shields.io/github/license/technothatch/general)](LICENSE) [![GitHub Pages](https://img.shields.io/badge/demo-GitHub%20Pages-247da3)](https://technothatch.github.io/general/)
+[![Build and Deploy](https://github.com/technothatch/general/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/technothatch/general/actions/workflows/deploy-pages.yml)
+[![GitHub Pages](https://img.shields.io/badge/demo-GitHub%20Pages-247da3?logo=github)](https://technothatch.github.io/general/)
+[![License](https://img.shields.io/github/license/technothatch/general)](LICENSE)
+[![GitHub release](https://img.shields.io/github/v/release/technothatch/general?display_name=tag)](https://github.com/technothatch/general/tags)
+[![Last commit](https://img.shields.io/github/last-commit/technothatch/general)](https://github.com/technothatch/general/commits/main)
+[![Issues](https://img.shields.io/github/issues/technothatch/general)](https://github.com/technothatch/general/issues)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.x-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-8.x-646cff?logo=vite&logoColor=white)](https://vite.dev/)
+[![Static site](https://img.shields.io/badge/site-static-2ea44f)](ARCHITECTURE.md)
+[![No tracking](https://img.shields.io/badge/analytics-none-2ea44f)](PRIVACY.md)
+[![Data storage](https://img.shields.io/badge/data-local--only-2ea44f)](PRIVACY.md)
+[![Responsive](https://img.shields.io/badge/layout-responsive-0ea5e9)](https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Responsive_Design)
 
-Daymark is a quiet, private daily focus tool for people who want a simple place to plan, focus, and reset without an account or an AI layer.
+Daymark is a quiet, private daily focus tool for people who want a simple place to plan, focus, and reset without an account, tracking, or an AI layer.
 
-## Why this product
+## Why Daymark
 
-The research direction came from current public productivity discussions and search results: people repeatedly ask for simple daily planners, focus timers, and tools that reduce context switching. Recent maker conversations also show fatigue with bloated productivity products and AI being pushed into workflows where it is not needed. Daymark combines those high-frequency needs into one fast daily ritual.
+Daymark is designed as one small daily ritual: choose a few intentions, give one thing your attention, and unload whatever is taking up space. It avoids streak pressure, rankings, account setup, and unnecessary notifications.
 
 ## What is included
 
 - Local-only intentions with completion progress
-- A 25-minute focus timer
+- Focus timer presets for 5, 25, and 50 minutes
 - A private daily note with a character limit
 - A lightweight mood check-in
 - JSON export and a clear-local-data control
@@ -20,14 +31,14 @@ The research direction came from current public productivity discussions and sea
 
 ## Cost and maintenance
 
-This is a static Vite app. It has no database, authentication, analytics, external API, server, or paid dependency. User data stays in browser localStorage. It can be hosted for free on GitHub Pages, Cloudflare Pages, Netlify, or Vercel. The only routine maintenance is updating dependencies occasionally and swapping the sponsor placeholder for an approved ad network when traffic justifies it.
+This is a static Vite app. It has no database, authentication, analytics, external API, server, or paid dependency. User data stays in browser storage. It can be hosted for free on GitHub Pages, Cloudflare Pages, Netlify, or Vercel. The only routine maintenance is updating dependencies occasionally and replacing the sponsor placeholder if the project ever needs one.
 
 The app uses two privacy-preserving browser stores: a first-party `SameSite=Lax` cookie for small preferences such as mood and timer length, and localStorage for tasks, notes, intention memory, and statistics. Nothing is sent to a server.
 
 ## Run locally
 
 ```sh
-npm install
+npm ci
 npm run dev
 ```
 
@@ -35,7 +46,7 @@ Create a production build with `npm run build`. The generated `dist/` folder is 
 
 ## Live demo and deployment
 
-The intended public URL is [technothatch.github.io/general](https://technothatch.github.io/general/). Every push to `main` runs the GitHub Pages workflow in `.github/workflows/deploy-pages.yml`. GitHub Pages must be enabled once in repository settings with **Source: GitHub Actions**; after that, deployment is automatic.
+The live demo is [technothatch.github.io/general](https://technothatch.github.io/general/). Every push to `main` runs the GitHub Pages workflow in `.github/workflows/deploy-pages.yml`. Enable GitHub Pages once in repository settings with **Source: GitHub Actions**; after that, deployment is automatic.
 
 SEO entry pages:
 
